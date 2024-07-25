@@ -1,0 +1,49 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/results_data":
+    post:
+      summary: Creates a result
+      tags:
+      - Results
+      security:
+      - ApiKeyAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: result created
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                result:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    timestamp:
+                      type: string
+                      format: date_time
+                    marks:
+                      type: number
+                  required:
+                  - subject
+                  - timestamp
+                  - marks
+              required:
+              - result
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+security:
+- ApiKeyAuth: []

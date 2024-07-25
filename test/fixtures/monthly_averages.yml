@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2024-07-25
+  subject: MyString
+  monthly_avg_low: 9.99
+  monthly_avg_high: 9.99
+  monthly_result_count_used: 1
+
+two:
+  date: 2024-07-25
+  subject: MyString
+  monthly_avg_low: 9.99
+  monthly_avg_high: 9.99
+  monthly_result_count_used: 1
