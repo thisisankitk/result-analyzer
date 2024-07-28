@@ -18,8 +18,8 @@ This application works with test results and performs End of Day (EOD) and Month
 
 ### Prerequisites
 
-- Ruby 2.7.1 or later
-- Rails 6.1.0 or later
+- Ruby 3.0.0 or later
+- Rails 7.1.0 or later
 - PostgreSQL (recommended) or SQLite3
 
 ### Installation
@@ -27,8 +27,8 @@ This application works with test results and performs End of Day (EOD) and Month
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/result_analyzer.git
-    cd result_analyzer
+    git clone https://github.com/thisisankitk/result-analyzer.git
+    cd result-analyzer
     ```
 
 2. **Install the dependencies:**
@@ -50,23 +50,7 @@ This application works with test results and performs End of Day (EOD) and Month
     rails db:seed
     ```
 
-5. **Set up logging for Rake tasks:**
-
-    Add the following code to `config/initializers/rake_logger.rb`:
-
-    ```ruby
-    require 'logger'
-
-    module Rake
-      class Task
-        def logger
-          @logger ||= Logger.new(STDOUT)
-        end
-      end
-    end
-    ```
-
-6. **Start the Rails server:**
+5. **Start the Rails server:**
 
     ```bash
     rails server
@@ -90,6 +74,17 @@ Navigate to `http://localhost:3000` to access the application.
     "marks": 85.25
   }
   ```
+
+### API Documentation
+
+API documentation is provided using Swagger.
+
+1. **Swagger Setup:** The Swagger documentation is set up using the `rswag` gem.
+2. **View Documentation:** Navigate to `http://localhost:3000/api-docs` to view the interactive API documentation.
+3. **Generate Swagger JSON:** To generate the Swagger JSON files, run:
+    ```ruby
+    rails rswag:specs:swaggerize
+    ```
 
 ### Admin Panel
 
@@ -142,15 +137,21 @@ Navigate to `http://localhost:3000/admin` to access the admin panel.
 
   The generated API key will be displayed in the console.
 
-### Database Seeding
+### Schedule Cron Job
 
-Add a seed file to create an admin user. Create or update `db/seeds.rb`:
+- **Schedule a Cron Job Daily:**
 
-```ruby
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
-```
+  ##### Update the Crontab
+  Update the crontab with the defined schedule by running:
+  ```bash
+  bundle exec whenever --update-crontab
+  ```
 
-
+  #### Verify the Crontab
+  Verify that the crontab has been updated by running:
+  ```bash
+  crontab -l
+  ```
 
 ## Max Day Back Logic
 

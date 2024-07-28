@@ -25,7 +25,7 @@ RSpec.describe 'api/v1/results_data', type: :request do
       }
 
       response '201', 'result created' do
-        let(:Authorization) { 'your_api_key_here' }
+        let(:Authorization) { create(:api_key).access_token }
         let(:result) { { result: { subject: 'English', timestamp: '2024-07-24T23:15:46.221Z', marks: 45 } } }
         run_test!
       end

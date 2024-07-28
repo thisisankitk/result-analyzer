@@ -1,7 +1,6 @@
 # lib/tasks/eod_tasks.rake
 
 require 'logger'
-
 logger = Logger.new(STDOUT)
 
 namespace :eod do
@@ -33,7 +32,6 @@ namespace :eod do
           logger.info "No results for subject: #{subject}"
         end
       end
-
       if Date.today == DateHelper.monday_of_third_wednesday_week(Date.today)
         calculate_monthly_averages(logger)
       end
@@ -50,23 +48,35 @@ namespace :eod do
       subjects.each do |subject|
         total_results = 0
         daily_stats = []
-        start_date = Date.today - 5.days
-        end_date = Date.today - 1.day  # Exclude today's records
+        current_date = Date.today
         max_days_back = 30  # Limit the number of days to go back
 
+        # First, gather data from today and the last 4 days
+        (0..4).each do |i|
+          stats = DailyResultStat.where('date = ? AND subject = ?', current_date - i.days, subject.subject)
+          if stats.any?
+            total_results += stats.sum(:result_count)
+            daily_stats += stats
+          end
+        end
+
+        # If total results are less than 200, go back day by day
+        current_date -= 5.days
+        max_days_back -= 4
         while total_results < 200 && max_days_back > 0 do
-          stats = DailyResultStat.where('date >= ? AND date <= ? AND subject = ?', start_date, end_date, subject.subject)
-          total_results += stats.sum(:result_count)
-          daily_stats += stats
-          end_date = start_date - 1.day
-          start_date -= 5.days
-          max_days_back -= 5
+          stats = DailyResultStat.where('date = ? AND subject = ?', current_date, subject.subject)
+          if stats.any?
+            total_results += stats.sum(:result_count)
+            daily_stats += stats
+          end
+          current_date -= 1.day
+          max_days_back -= 1
         end
 
         logger.info "Collected daily stats for subject #{subject.subject}: #{daily_stats.map(&:attributes)}"
         if daily_stats.any?
-          monthly_avg_low = daily_stats.sum(&:daily_low) / daily_stats.size
-          monthly_avg_high = daily_stats.sum(&:daily_high) / daily_stats.size
+          monthly_avg_low = (daily_stats.sum(&:daily_low) / daily_stats.size).to_f.round(2)
+          monthly_avg_high = (daily_stats.sum(&:daily_high) / daily_stats.size).to_f.round(2)
 
           MonthlyAverage.create!(
             date: Date.today,
